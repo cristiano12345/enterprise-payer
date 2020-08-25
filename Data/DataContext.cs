@@ -31,6 +31,8 @@ public class DataContext : DbContext
 
     public DbSet<StatusPagamento> StatusPagamento { get; set; }
 
+     public DbSet<StatusVenda> StatusVenda { get; set; }
+
     public DbSet<TipoConta> TipoConta { get; set; }
 
     public DbSet<Torre> Torre { get; set; }

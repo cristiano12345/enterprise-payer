@@ -1,67 +1,31 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LoanPayer;
 using LoanPayer.domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("usuario")]
-public class UsuarioController : ControllerBase {
-
-
-    [HttpPost]
-    [Route("login")]
-    public async Task<ActionResult<dynamic>> Login(
-        [FromServices] DataContext context, 
-        [FromBody]Usuario model)
-    {           
-
-            try 
-            {
-               var usuario = await context.Usuario
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => 
-                        x.Login.Equals(model.Login) &&
-                        x.Password.Equals(model.Password));
-
-                if(usuario == null)
-                    NotFound(new { message = "Usuario não encontrado" });
-
-                var token = TokenService.GenerateToken(usuario);
-
-                return new 
-                {
-                    usuario = usuario,
-                    token = token
-                };
-
-            }
-            catch
-            {
-                return BadRequest(new { message = "Erro ao localizar o usuario" });
-            }       
-    }
-
-
-
-
+[Route("endereco")]
+public class EnderecoController : ControllerBase {
 
     [HttpGet]
     [Route("")]
-    public async Task<ActionResult<List<Usuario>>> Get(
+    [Authorize(Roles="admin")]
+    public async Task<ActionResult<List<Endereco>>> Get(
         [FromServices] DataContext context)
     { 
-        var model = await context.Usuario.AsNoTracking().ToListAsync();
+        var model = await context.Endereco.AsNoTracking().ToListAsync();
         return Ok(model);
     }
 
     [HttpGet]
     [Route("{id:long}")]
-    public async Task<ActionResult<Usuario>> Get(
+    [Authorize(Roles="admin")]
+    public async Task<ActionResult<Endereco>> Get(
         long id,
         [FromServices] DataContext context)
     { 
-        var model = await context.Usuario
+        var model = await context.Endereco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id.Equals(id));
             
@@ -71,16 +35,17 @@ public class UsuarioController : ControllerBase {
 
     [HttpPost]
     [Route("")]
-    public async Task<ActionResult<Usuario>> Post(
+    [Authorize(Roles="admin")]
+    public async Task<ActionResult<Endereco>> Post(
         [FromServices] DataContext context, 
-        [FromBody]Usuario model)
+        [FromBody]Endereco model)
     {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try 
             {
-                context.Usuario.Add(model);
+                context.Endereco.Add(model);
                 await context.SaveChangesAsync();
                 return Ok(model);
             }
@@ -92,10 +57,11 @@ public class UsuarioController : ControllerBase {
 
     [HttpPut]
     [Route("{id:int}")]
-    public async Task<ActionResult<Usuario>> Put(
+    [Authorize(Roles="admin")]
+    public async Task<ActionResult<Endereco>> Put(
         int id, 
         [FromServices] DataContext context, 
-        [FromBody]Usuario model)
+        [FromBody]Endereco model)
     {
             if(id != model.Id)
                 return NotFound(new { message = "Não encontrado" });
@@ -105,7 +71,7 @@ public class UsuarioController : ControllerBase {
 
             try 
             {
-                context.Entry<Usuario>(model).State = EntityState.Modified;
+                context.Entry<Endereco>(model).State = EntityState.Modified;
                 await context.SaveChangesAsync();
                 return Ok(model);
             }
@@ -121,20 +87,21 @@ public class UsuarioController : ControllerBase {
 
     [HttpDelete]
     [Route("{id:int}")]
+    [Authorize(Roles="admin")]
     public async Task<ActionResult<string>> Delete(
         long id, 
         [FromServices] DataContext context 
         )
     {
 
-            var model = await context.Usuario.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var model = await context.Endereco.FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             if(model == null)
                 return NotFound(new { message = "Não encontrado" });           
 
             try 
             {
-                context.Usuario.Remove(model);
+                context.Endereco.Remove(model);
                 await context.SaveChangesAsync();
                 return Ok(new { message = "Registro removido com sucesso" });
             }           

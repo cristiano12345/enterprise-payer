@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("TipoConta")]
+[Route("tipo-conta")]
 public class TipoContaController : ControllerBase {
 
     [HttpGet]

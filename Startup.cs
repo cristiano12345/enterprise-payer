@@ -60,7 +60,7 @@ namespace LoanPayer
             //services.AddScoped<DataContext, DataContext>();
 
             services.AddSwaggerGen(sw => {
-                sw.SwaggerDoc("v1", new OpenApiInfo { Title = "LoanPayer", Version = "v1" });
+                sw.SwaggerDoc("v1", new OpenApiInfo { Title = "Pagadoria", Version = "v1" });
             });
 
         }
